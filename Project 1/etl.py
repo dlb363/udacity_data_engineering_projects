@@ -65,7 +65,7 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = 
+        songplay_data = (0, row.start_time, row.userId, row.level, songid, artistid, row.sessionId, row.location, row.userAgent)
         cur.execute(songplay_table_insert, songplay_data)
 
 
@@ -73,6 +73,7 @@ def process_data(cur, conn, filepath, func):
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
+        print('one')
         files = glob.glob(os.path.join(root,'*.json'))
         for f in files :
             all_files.append(os.path.abspath(f))
@@ -92,8 +93,8 @@ def main():
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
-    process_data(cur, conn, filepath='data/song_data', func=process_song_file)
-    process_data(cur, conn, filepath='data/log_data', func=process_log_file)
+    process_data(cur, conn, filepath='Project 1/data/song_data', func=process_song_file)
+    process_data(cur, conn, filepath='Project 1/data/log_data', func=process_log_file)
 
     conn.close()
 
