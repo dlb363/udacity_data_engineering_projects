@@ -7,37 +7,46 @@ from sql_queries import *
 
 def process_song_file(cur, filepath):
     # open song file
-    df = 
+    df = pd.read_json(filepath, lines=True)
 
     # insert song record
-    song_data = 
+    song_data = df[['song_id', 'title', 'artist_id', 'year', 'duration']].values[0].tolist()
     cur.execute(song_table_insert, song_data)
     
     # insert artist record
-    artist_data = 
+    artist_data = df[['artist_id', 'artist_name', 'artist_location', 'artist_latitude', 'artist_longitude']].values[0].tolist()
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
     # open log file
-    df = 
+    df = pd.read_json(filepath, lines=True)
 
     # filter by NextSong action
-    df = 
+    df = df[df.page=='NextSong'].copy()
 
-    # convert timestamp column to datetime
-    t = 
+    # Convert unixtime to datetime and formatted cols
+    df['start_time'] = pd.to_datetime(df['ts'], unit='ms')
+    df['hour'] = df.start_time.dt.strftime('%H')
+    df['day'] = df.start_time.dt.strftime('%d')
+    df['week'] = df.start_time.dt.strftime('%U')
+    df['month'] = df.start_time.dt.strftime('%m')
+    df['year'] = df.start_time.dt.strftime('%Y')
+    df['weekday'] = df.start_time.dt.strftime('%w')
+
+    # # convert timestamp column to datetime
+    # t = 
     
-    # insert time data records
-    time_data = 
-    column_labels = 
-    time_df = 
+    # # insert time data records
+    # time_data = 
+    # column_labels = 
+    time_df = df[['start_time', 'hour', 'day', 'week', 'month', 'year', 'weekday']].copy()
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
 
     # load user table
-    user_df = 
+    user_df = df[['userId', 'firstName', 'lastName', 'gender', 'level']].copy()
 
     # insert user records
     for i, row in user_df.iterrows():
