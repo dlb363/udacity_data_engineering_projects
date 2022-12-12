@@ -6,6 +6,10 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+    This function takes a filepath, converts the JSON file into a dataframe, selects desired columns, 
+    and then inserts the columns into the tables
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
 
@@ -19,6 +23,11 @@ def process_song_file(cur, filepath):
 
 
 def process_log_file(cur, filepath):
+    """
+    This function takes a filepath, converts the JSON file into a dataframe, selects desired columns, 
+    then it transforms the UNIXTIME foudn in the JSON file to various datetime formats,
+    and then inserts the columns into the tables
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -70,6 +79,10 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+    This function generates a list of the JSON files by looping through all the directories looking for JSON files. 
+    Then for each file it calls the previous functions to transform them and insert them into the tables. 
+    """
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -90,6 +103,9 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+    This is the main function that connects with the database and calls the process_data functions.
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
